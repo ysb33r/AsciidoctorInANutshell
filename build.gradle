@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         jcenter()
-        mavenLocal()
+        mavenCentral()
     }
 
     dependencies {
@@ -38,6 +38,7 @@ ext {
 
 dependencies {
     gems 'rubygems:slim:2.1.0'
+    gems 'rubygems:asciidoctor-diagram:1.2.1'
 }
 
 task download << {
@@ -64,10 +65,11 @@ download {
 
 asciidoctor {
 
-    requires 'tilt','slim'
+    requires 'tilt','slim','asciidoctor-diagram'
+    gemPath = jrubyPrepareGems.outputDir
 
     sources {
-        include 'greach2015.adoc'
+        include 'AccuLondon.adoc'
     }
 
     resources {
