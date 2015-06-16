@@ -1,4 +1,4 @@
-= Asciidoctor in a Nutshell
+= Asciidoctor in 15min
 :author: Schalk W. Cronjé
 :email: ysb33r@gmail.com
 :twitter: @ysb33r
@@ -7,12 +7,18 @@
 :revealjs_theme: white
 :revealjs_controls: false
 :revealjs_history: true
-:revealjs_slideNumber : true
+:revealjs_slideNumber: true
 :revealjs_center: true
 :imagesdir: images
+:icons: font
+:toc: left
+:stem: asciimath
 
 == Why?
 
+* Focus on content, not formatting
+* Source-control friendly
+* No proprietary source format
 * More powerful than Markdown, including
 ** Github MD
 ** Leanpub Markuva
@@ -94,18 +100,43 @@ image::asciidoc_in_2014_700x700.jpg["Asciidoc & Friends in 2014",600,600]
 
 == Source Code Highlighting
 
-****
+```
 [source,cpp]
 ----
-std::cout << "foo" << std::endl; // <1>
+int main(int argc,char** argv) {
+  std::cout << "Hello, world!" << std::endl;
+}
 ----
-****
+```
 
+ifndef::backend-html5[]
 [source,cpp]
 ----
-std::cout << "foo" << std::endl; // <1>
+int main(int argc,char** argv) {
+  std::cout << "Hello, world!" << std::endl;
+}
 ----
-<1> Callouts in code!!
+endif::backend-html5[]
+ifdef::backend-html5[]
+[source,cpp]
+----
+int main(int argc,char** argv) {
+  std::cout << "Hello, world!" << std::endl; // <1>
+}
+----
+endif::backend-html5[]
+
+== Math equations
+
+[asciimath]
+++++
+sqrt(4) = 2
+++++
+
+[latexmath]
+++++
+C = \alpha + \beta Y^{\gamma} + \epsilon
+++++
 
 == Buildtool support
 
@@ -130,17 +161,26 @@ A number of projects use Asciidoctor for documentation complete with tested code
 * Asciidoctor -> Pdf
 * Asciidoctor -> Epub
 
+ifndef::backend-html5[]
 == About this presentation
 
 * Written in Asciidoctor
 * Styled by asciidoctor-revealjs extension
+endif::backend-html5[]
+ifdef::backend-html5[]
+== About this document
+
+* Written in Asciidoctor
+endif::backend-html5[]
 * Built using:
 ** Gradle
 ** gradle-asciidoctor-plugin
 ** gradle-vfs-plugin
-* https://bitbucket.org/ysb33r/asciidoctorinanutshell 
+* https://bitbucket.org/ysb33r/asciidoctorinanutshell
 
+ifdef::backend-revealjs[]
 == Demo
+
 
 == Thank you
 
@@ -149,3 +189,4 @@ Schalk W. Cronjé
 ysb33r@gmail.com
 
 @ysb33r
+endif::backend-revealjs[]

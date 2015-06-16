@@ -91,12 +91,34 @@ asciidoctor {
     dependsOn jrubyPrepareGems
 }
 
+task asciidoctorHtml( type: org.asciidoctor.gradle.AsciidoctorTask ) {
+  requires 'tilt','slim','asciidoctor-diagram'
+  gemPath = jrubyPrepareGems.outputDir
+
+  sources {
+      include 'AccuLondon.adoc'
+  }
+
+  resources {
+      from('src/docs/asciidoc') {
+          include 'images/**'
+      }
+  }
+
+  backends 'html5'
+
+  attributes 'source-highlighter': 'coderay'
+
+  dependsOn download
+  dependsOn jrubyPrepareGems
+}
+
 task fixAccuLondon2015( type : Copy ) {
-    from( new File(buildDir,'asciidoc/revealjs') ) { include 'greach2015.html' }
+    from( new File(buildDir,'asciidoc/revealjs') ) { include 'AccuLondon.html' }
 
     into new File(buildDir,'asciidoc/revealjs')
 
-    rename 'greach2015.html','greach2015-1.html'
+    rename 'AccuLondon.html','AccuLondon-1.html'
 
     filter { line ->
         if( line ==~ /\.CodeRay.+/ ) {
