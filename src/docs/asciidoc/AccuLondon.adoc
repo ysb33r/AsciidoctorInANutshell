@@ -191,4 +191,7 @@ Schalk W. Cronjé
 ysb33r@gmail.com
 
 @ysb33r
+
+Read more at http://asciidoctor.org
+
 endif::backend-revealjs[]
