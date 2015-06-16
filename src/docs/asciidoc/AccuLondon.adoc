@@ -54,18 +54,18 @@ image::asciidoc_in_2014_700x700.jpg["Asciidoc & Friends in 2014",600,600]
  |         |  +--------+------+    /-----------+---\
  | Slides  |  |               |    |               |   +------------+
  |         |  | AsciidoctorJS |    | AsciidoctorJ  |-->+ Groovy DSL +---------+
- |         |  |  (Javascript) |    |    (JVM)      |   +------------+         |
+ |         |  | (Javascript)  |    |    (JVM)      |   +------------+         |
  |         |  |               |    |               |                          |
  +----+----+  +---------------+    \---------------/                          |
      |              |       |             |    |   (pre-alpha) +---------+    |
      | (alpha)      |       |             |    +-------------->+ Leanpub +    |
      v              v       |             |                    +---------+    |
- +----+----+  +-----+----+  |      /---------------\                          |
- | Pdf     |  | Browser  |  |      |    Gradle     +<----Dynamic extensions<--+
- | Epub    |  | plugins  |  |      |    Maven      |
- | Packt   |  |----------|  |      |    Ant        +<--Tested Docs
- | Mallard |  | Chrome   |  |      |    SBT        |
- | Latex   |  | Firefox  |  |      +---------------+
+ +----+----+  +-----+---+   |      /---------------\                          |
+ | Pdf     |  | Browser |   |      |    Gradle     +<----Dynamic extensions<--+
+ | Epub    |  | plugins |   |      |    Maven      |
+ | Packt   |  |---------|   |      |    Ant        +<--Tested Docs
+ | Mallard |  | Chrome  |   |      |    SBT        |
+ | Latex   |  | Firefox |   |      +---------------+
  +---------+  +----------+  +----->|    Grunt      |
                                    \---------------/
 ....
@@ -137,6 +137,8 @@ sqrt(4) = 2
 ++++
 C = \alpha + \beta Y^{\gamma} + \epsilon
 ++++
+
+`Conversion rendered in cloud`
 
 == Buildtool support
 
