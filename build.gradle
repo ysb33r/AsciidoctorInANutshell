@@ -1,0 +1,111 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+
+    dependencies {
+        // classpath 'org.asciidoctor:asciidoctorj-epub3:1.5.0-alpha.4'
+        // classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.6'
+        classpath 'org.ysb33r.gradle:vfs-gradle-plugin:1.0-beta1'
+        classpath 'commons-httpclient:commons-httpclient:3.1'
+        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:0.1.12'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.2'
+    }
+}
+
+
+version = '0.1'
+
+apply plugin : 'org.asciidoctor.convert'
+apply plugin : 'org.ysb33r.vfs'
+apply plugin : 'com.github.jruby-gradle.base'
+
+repositories {
+    jcenter()
+}
+
+
+ext {
+    downloadDir = new File(buildDir,'download')
+
+    revealjsVersion = 'master'
+    revealjsTemplateVersion = 'master'
+    revealjsDir = new File(downloadDir,'reveal.js')
+    revealjsTemplateDir = new File(downloadDir,'revealjs-backends/revealjs')
+
+}
+
+dependencies {
+    gems 'rubygems:slim:2.1.0'
+}
+
+task download << {
+    mkdir downloadDir
+    vfs {
+        if(!revealjsDir.exists()) {
+            cp "zip:https://github.com/hakimel/reveal.js/archive/${revealjsVersion}.zip!reveal.js-${revealjsVersion}",
+                    revealjsDir, recursive: true, overwrite: true
+        }
+        if(!revealjsTemplateDir.exists()) {
+            cp "zip:https://github.com/asciidoctor/asciidoctor-reveal.js/archive/${revealjsTemplateVersion}.zip!asciidoctor-reveal.js-${revealjsTemplateVersion}/templates/slim",
+                    revealjsTemplateDir, recursive: true, overwrite: true
+        }
+
+    }
+
+}
+
+download {
+    outputs.dir revealjsDir
+    outputs.dir revealjsTemplateDir
+}
+
+
+asciidoctor {
+
+    requires 'tilt','slim'
+
+    sources {
+        include 'greach2015.adoc'
+    }
+
+    resources {
+        from('src/docs/asciidoc') {
+            include 'images/**'
+        }
+        from (downloadDir) {
+            include 'reveal.js/**'
+        }
+    }
+
+    backends 'revealjs'
+
+    options template_dirs : [ revealjsTemplateDir.parentFile.absolutePath ]
+
+    attributes 'source-highlighter': 'coderay'
+
+    dependsOn download
+    dependsOn jrubyPrepareGems
+}
+
+task fixAccuLondon2015( type : Copy ) {
+    from( new File(buildDir,'asciidoc/revealjs') ) { include 'greach2015.html' }
+
+    into new File(buildDir,'asciidoc/revealjs')
+
+    rename 'greach2015.html','greach2015-1.html'
+
+    filter { line ->
+        if( line ==~ /\.CodeRay.+/ ) {
+            line = line.replace( /#007/,'#6666FF' ).
+                    replace( /#606/,'#FF00FF').
+                    replace( /#458/,'#6699FF' ).
+                    replace( /#000;f/,'#FF09900;f')
+        }
+
+        line
+    }
+
+    dependsOn asciidoctor
+}
