@@ -40,34 +40,41 @@ image::asciidoc_in_2014_700x700.jpg["Asciidoc & Friends in 2014",600,600]
 
 [ditaa]
 ....
-                                                       /---------------\
+                                                       +---------------+
                               +------------------------+  Extensions   |
                               |                        |       &       |
                               v                        | Converter API |
-        outputs    +----------+--+                     \------+--------/
+        outputs    /----------+--\ Via JRuby           +------+--------+
       +------------| Asciidoctor |-------+                    |
-      |            |   (Ruby)    |       | Via JRuby          |
-      v            +-------------+       |                    |
- +---------+           |                 |     +--------------+
- | HTML    |           | Via Opal        |     |
- | Docbook |           v                 v     v
- |         |  +--------+------+    /-----------+---\
- | Slides  |  |               |    |               |   +------------+
- |         |  | AsciidoctorJS |    | AsciidoctorJ  |-->+ Groovy DSL +---------+
- |         |  | (Javascript)  |    |    (JVM)      |   +------------+         |
- |         |  |               |    |               |                          |
- +----+----+  +---------------+    \---------------/                          |
-     |              |       |             |    |   (pre-alpha) +---------+    |
-     | (alpha)      |       |             |    +-------------->+ Leanpub +    |
-     v              v       |             |                    +---------+    |
- +----+----+  +-----+---+   |      /---------------\                          |
- | Pdf     |  | Browser |   |      |    Gradle     +<----Dynamic extensions<--+
- | Epub    |  | plugins |   |      |    Maven      |
- | Packt   |  |---------|   |      |    Ant        +<--Tested Docs
- | Mallard |  | Chrome  |   |      |    SBT        |
- | Latex   |  | Firefox |   |      +---------------+
- +---------+  +---------+   +----->|    Grunt      |
-                                   \---------------/
+      |            |   (Ruby)    |       |                    |
+      v            \-------------/       |                    |
+ +----------+          |                 |     +--------------+
+ |   HTML   |          | Via Opal        |     |
+ | Docbook  |          v                 v     v
+ |----------| /--------+------\    /-----------+-\
+ | Slides   | |               |    |             |     +------------+
+ |          | | AsciidoctorJS |    | Asciidoctor |---->+ Groovy DSL +---------+
+ | Revealjs | | (Javascript)  |    |    (JVM)    |     +------------+         |
+ | Deck.js  | |               |    |             |                            |
+ +----------+ \---------------/    \-------------/                            |
+     |              |     | |             |    |   (pre-alpha) +---------+    |
+     | (alpha)      |     | |             |    +-------------->+ Leanpub +    |
+     v              v     | |             v                    +---------+    |
+ +----+----+  +-----+---+ | |      /---------------\                          |
+ | Pdf     |  | Browser | | |      |    Gradle     +<----Dynamic extensions<--+
+ | Epub    |  | plugins | | |      |    Maven      |
+ | Packt   |  |---------| | |      |    Ant        +<--Tested Docs
+ | Mallard |  | Chrome  | | |      |    SBT        |
+ | Latex   |  | Firefox | | |      +---------------+
+ +---------+  +---------+ | +----->|    Grunt      |
+                          v        \---------------/
+                  +----------+
+                  | Editors  |
+                  |----------|
+                  |  Atom    |
+                  | Brackets |
+                  +----------+
+
 ....
 
 == Drawing support
@@ -149,7 +156,8 @@ C = \alpha + \beta Y^{\gamma} + \epsilon
 
 == Projects
 
-A number of projects use Asciidoctor for documentation complete with tested code snippets
+A number of projects use Asciidoctor for documentation complete with tested
+code snippets, including:
 
 * Groovy Language
 * Spring
