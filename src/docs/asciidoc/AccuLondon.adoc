@@ -65,7 +65,7 @@ image::asciidoc_in_2014_700x700.jpg["Asciidoc & Friends in 2014",600,600]
  | Epub    |  | plugins | | |      |    Maven      |
  | Packt   |  |---------| | |      |    Ant        +<--Tested Docs
  | Mallard |  | Chrome  | | |      |    SBT        |
- | Latex   |  | Firefox | | |      +---------------+
+ | LaTeX   |  | Firefox | | |      +---------------+
  +---------+  +---------+ | +----->|    Grunt      |
                           v        \---------------/
                   +----------+
