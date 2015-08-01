@@ -65,8 +65,9 @@ image::asciidoc_in_2014_700x700.jpg["Asciidoc & Friends in 2014",600,600]
  | Epub    |  | plugins | | |      |    Maven      |
  | Packt   |  |---------| | |      |    Ant        +<--Tested Docs
  | Mallard |  | Chrome  | | |      |    SBT        |
- | LaTeX   |  | Firefox | | |      +---------------+
- +---------+  +---------+ | +----->|    Grunt      |
+ | LaTeX   |  | Firefox | | |      +   Leiningen   +
+ +---------+  +---------+ | |      +---------------+
+                          | +----->|    Grunt      |
                           v        \---------------/
                   +----------+
                   | Editors  |
@@ -74,7 +75,7 @@ image::asciidoc_in_2014_700x700.jpg["Asciidoc & Friends in 2014",600,600]
                   |  Atom    |
                   | Brackets |
                   +----------+
-
+                  
 ....
 
 == Drawing support
@@ -135,23 +136,27 @@ endif::backend-html5[]
 
 == Math equations
 
+.Asciimath
 [asciimath]
 ++++
 sqrt(4) = 2
 ++++
 
+.Latexmath
 [latexmath]
 ++++
 C = \alpha + \beta Y^{\gamma} + \epsilon
 ++++
 
-`Conversion rendered in cloud`
+`Limitation: Conversion rendered in cloud`
 
 == Buildtool support
 
 * Maven
 * Gradle
 * Ant
+* Leiningen
+* SBT
 * Grunt
 
 == Projects
