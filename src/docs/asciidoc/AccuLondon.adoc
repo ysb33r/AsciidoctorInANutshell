@@ -75,7 +75,7 @@ image::asciidoc_in_2014_700x700.jpg["Asciidoc & Friends in 2014",600,600]
                   |  Atom    |
                   | Brackets |
                   +----------+
-                  
+
 ....
 
 == Drawing support
@@ -208,3 +208,44 @@ ysb33r@gmail.com
 Read more at http://asciidoctor.org
 
 endif::backend-revealjs[]
+
+== Another diagram
+
+[ditaa]
+....
+
+     /---------------\
+---->+ Simple system +---->
+     | No feedback   |
+     \---------------/
+
+     /---------------\
+---->+ Simple system +--+->
+     | With report   |  |
+     \---------------/  |
+                        v
+                      /-+-\
+                      | R |
+                      \---/
+
+
+      /---------------\
+ --o->+ Simple system +--+->
+   ^  | With feedback |  |
+   |  \---------------/  |
+   \---------------------/
+
+
+      /-----------------\
+ --o->+ Simple system   +--+->
+   ^  | With attenuated |  |
+   |  | feedback        |  |
+   |  \-----------------/  |
+   |                       |
+   |          /-\          |
+   \----------|A|<---------/
+              \-/
+               ^
+               | Control level
+               | of feedback
+....
