@@ -1,135 +1,152 @@
 buildscript {
     repositories {
+      mavenLocal()
         jcenter()
-        mavenCentral()
     }
 
     dependencies {
-        // classpath 'org.asciidoctor:asciidoctorj-epub3:1.5.0-alpha.4'
-        // classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.6'
-        classpath 'org.ysb33r.gradle:vfs-gradle-plugin:1.0-beta1'
+        classpath 'org.ysb33r.gradle:vfs-gradle-plugin:1.0-beta7-SNAPSHOT'
         classpath 'commons-httpclient:commons-httpclient:3.1'
-        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:0.1.12'
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.2'
+
+        // classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+        classpath 'org.asciidoctor:asciidoctorj-diagram:1.3.1'
     }
 }
 
+plugins {
+  id 'org.asciidoctor.convert' version '1.5.3'
+}
 
-version = '0.1'
-
-apply plugin : 'org.asciidoctor.convert'
 apply plugin : 'org.ysb33r.vfs'
-apply plugin : 'com.github.jruby-gradle.base'
-
-repositories {
-    jcenter()
-}
-
-
-ext {
-    downloadDir = new File(buildDir,'download')
-
-    revealjsVersion = 'master'
-    revealjsTemplateVersion = 'master'
-    revealjsDir = new File(downloadDir,'reveal.js')
-    revealjsTemplateDir = new File(downloadDir,'revealjs-backends/revealjs')
-
-}
 
 dependencies {
-    gems 'rubygems:slim:2.1.0'
-    gems 'rubygems:asciidoctor-diagram:1.2.1'
+  asciidoctor 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.10.1'
 }
 
-task download << {
-    mkdir downloadDir
-    vfs {
-        if(!revealjsDir.exists()) {
-            cp "zip:https://github.com/hakimel/reveal.js/archive/${revealjsVersion}.zip!reveal.js-${revealjsVersion}",
-                    revealjsDir, recursive: true, overwrite: true
-        }
-        if(!revealjsTemplateDir.exists()) {
-            cp "zip:https://github.com/asciidoctor/asciidoctor-reveal.js/archive/${revealjsTemplateVersion}.zip!asciidoctor-reveal.js-${revealjsTemplateVersion}/templates/slim",
-                    revealjsTemplateDir, recursive: true, overwrite: true
-        }
+ext {
+    audience = 'DeveloperUG2015'
+    downloadDir = new File(buildDir,'download')
 
-    }
-
+    revealjsVersion = '3.1.0'
+    revealjsUrl = 'https://github.com/hakimel/reveal.js'
+    revealjsTemplateVersion = 'master'
+    revealjsTemplateUrl = 'https://github.com/ysb33r/asciidoctor-reveal.js'
+    revealjsDir = new File(downloadDir,'reveal.js')
+    revealjsTemplateDir = new File(downloadDir,'revealjs-backends/reveal.js/templates/slim')
 }
 
-download {
-    outputs.dir revealjsDir
-    outputs.dir revealjsTemplateDir
-}
-
+version = "1.0-${audience}"
 
 asciidoctor {
 
-    requires 'tilt','slim','asciidoctor-diagram'
-    gemPath = jrubyPrepareGems.outputDir
+    requires 'asciidoctor-diagram'
 
     sources {
-        include 'AccuLondon.adoc'
+        include "${audience}.adoc"
     }
 
     resources {
         from('src/docs/asciidoc') {
             include 'images/**'
+            include 'stylesheets/**'
+            exclude 'images/diag-*.png.cache'
         }
-        from (downloadDir) {
-            include 'reveal.js/**'
+        from zipTree("${revealjsDir}/${revealjsVersion}.zip"), {
+            include "reveal.js-${revealjsVersion}/**"
+            eachFile {
+              it.path = it.path.replaceAll("reveal.js-${revealjsVersion}",'reveal.js')
+            }
         }
     }
 
     backends 'revealjs'
 
-    options template_dirs : [ revealjsTemplateDir.parentFile.absolutePath ]
+    options template_dirs : [ revealjsTemplateDir.absolutePath ],
+      partition : true
 
-    attributes 'source-highlighter': 'coderay'
+    attributes 'source-highlighter': 'coderay',
+      'asciidoctorj' : asciidoctorj.version,
+      'imagesoutdir' : file("${outputDir}/revealjs/images").absolutePath,
+      'imagesdir'    : 'images'
 
-    dependsOn download
-    dependsOn jrubyPrepareGems
+    dependsOn 'download'
 }
 
-task asciidoctorHtml( type: org.asciidoctor.gradle.AsciidoctorTask ) {
-  requires 'tilt','slim','asciidoctor-diagram'
-  gemPath = jrubyPrepareGems.outputDir
 
-  sources {
-      include 'AccuLondon.adoc'
-  }
-
-  resources {
-      from('src/docs/asciidoc') {
-          include 'images/**'
-      }
-  }
-
-  backends 'html5'
-
-  attributes 'source-highlighter': 'coderay'
-
-  dependsOn download
-  dependsOn jrubyPrepareGems
+task revealsJS( type : org.ysb33r.gradle.vfs.tasks.VfsCopy ) {
+  from "${revealjsUrl}/archive/${revealjsVersion}.zip"
+  into file("${revealjsDir}")
 }
 
-task fixAccuLondon2015( type : Copy ) {
-    from( new File(buildDir,'asciidoc/revealjs') ) { include 'AccuLondon.html' }
+task downloadRevealsJSTemplates( type : org.ysb33r.gradle.vfs.tasks.VfsCopy ) {
+  from "${revealjsTemplateUrl}/archive/${revealjsTemplateVersion}.zip"
+  into file("${downloadDir}/revealjs-backends")
+}
 
-    into new File(buildDir,'asciidoc/revealjs')
+task revealsJSTemplates( type : org.ysb33r.gradle.vfs.tasks.VfsCopy ) {
+  dependsOn downloadRevealsJSTemplates
+  from "zip:${downloadDir}/revealjs-backends/${revealjsTemplateVersion}.zip!asciidoctor-reveal.js-${revealjsTemplateVersion}/templates"
+  into file("${downloadDir}/revealjs-backends/reveal.js")
+//  from "zip:${revealjsTemplateUrl}/archive/${revealjsTemplateVersion}.zip!asciidoctor-reveal.js-${revealjsTemplateVersion}/templates", {
+}
 
-    rename 'AccuLondon.html','AccuLondon-1.html'
+task download {
+  finalizedBy revealsJS,revealsJSTemplates
+}
 
-    filter { line ->
-        if( line ==~ /\.CodeRay.+/ ) {
-            line = line.replace( /#007/,'#6666FF' ).
-                    replace( /#606/,'#FF00FF').
-                    replace( /#458/,'#6699FF' ).
-                    replace( /#000;f/,'#FF09900;f')
-        }
+task asciidoctorHtml( type : org.asciidoctor.gradle.AsciidoctorTask ) {
 
-        line
+    requires 'asciidoctor-diagram'
+
+    sources {
+        include "${audience}.adoc"
     }
 
-    dependsOn asciidoctor
+    resources {
+        from('src/docs/asciidoc') {
+            include 'images/**'
+            include 'stylesheets/**'
+            exclude 'images/diag-*.png.cache'
+        }
+    }
+
+    backends 'html5'
+
+    attributes 'source-highlighter': 'coderay',
+      'asciidoctorj' : asciidoctorj.version,
+      'imagesoutdir' : file("${outputDir}/html5/images").absolutePath,
+      'imagesdir'    : 'images'
+}
+
+task asciidoctorPdf( type : org.asciidoctor.gradle.AsciidoctorTask ) {
+
+    requires 'asciidoctor-diagram'
+
+    sources {
+        include "${audience}.adoc"
+    }
+
+    resources {}
+      
+    doFirst {
+        copy {
+          from('src/docs/asciidoc') {
+              include 'images/**'
+              // exclude 'images/diag-*.png.cache'
+          }
+          into file("${outputDir}/pdf/images")
+        }
+    }
+
+    backends 'pdf'
+
+    attributes 'source-highlighter': 'coderay',
+      'asciidoctorj' : asciidoctorj.version,
+      'imagesoutdir' : file("${outputDir}/pdf/images"),
+      'imagesdir' : file("${outputDir}/pdf/images")
+
+}
+
+task asciidoctorDemo {
+   finalizedBy asciidoctorHtml, asciidoctorPdf
 }
